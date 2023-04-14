@@ -8,6 +8,7 @@ public static class EsEventSerde
 {
     public static object? Deserialize(this ResolvedEvent resolvedEvent)
     {
+        // could be here too
         return JsonConvert
             .DeserializeObject(Encoding.UTF8.GetString(resolvedEvent.Event.Data.ToArray()),
                 new JsonSerializerSettings {TypeNameHandling = TypeNameHandling.Objects});

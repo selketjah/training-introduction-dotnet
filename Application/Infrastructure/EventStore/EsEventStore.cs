@@ -46,7 +46,13 @@ public class EsEventStore : IEventStore
 
         return await response
             .Select(e => e.Deserialize()!)
+            // .Select(e =>
+            //     var uppie = upcasters.contains(e);
+            //     if(uppie <> null){
+            //         uppie.cast(e);
+            //     })
             .ToListAsync();
+            //.AlmightUpcast();
     }
 
     private string ToStreamName(string streamName) =>
