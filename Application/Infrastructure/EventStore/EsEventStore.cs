@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Application.EventSourcing;
 using EventStore.Client;
 using Scheduling.Domain.Infrastructure;
 
@@ -46,11 +47,7 @@ public class EsEventStore : IEventStore
 
         return await response
             .Select(e => e.Deserialize()!)
-            // .Select(e =>
-            //     var uppie = upcasters.contains(e);
-            //     if(uppie <> null){
-            //         uppie.cast(e);
-            //     })
+            .Select(e => EventVersioning.upcast((IEvent)e))
             .ToListAsync();
             //.AlmightUpcast();
     }
