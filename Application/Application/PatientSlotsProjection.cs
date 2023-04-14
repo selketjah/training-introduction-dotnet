@@ -11,6 +11,12 @@ public class PatientSlotsProjection : Projection
     {
         When<Scheduled>(e =>
         {
+            repo.Add(new ScheduledSlot(e.SlotId, e.StartTime, new System.TimeSpan(0,15,0)));
+            return Task.CompletedTask;
+        });
+
+        When<ScheduledWithDuration>(e =>
+        {
             repo.Add(new ScheduledSlot(e.SlotId, e.StartTime, e.Duration));
             return Task.CompletedTask;
         });

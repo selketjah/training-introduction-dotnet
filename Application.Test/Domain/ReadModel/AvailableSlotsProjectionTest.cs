@@ -26,7 +26,7 @@ public class AvailableSlotsProjectionTest : ProjectionTest
     [Fact]
     public void should_add_slot_to_the_list()
     {
-        var scheduled = new Scheduled(Guid.NewGuid().ToString(), _now, _tenMinutes);
+        var scheduled = new ScheduledWithDuration(Guid.NewGuid().ToString(), _now, _tenMinutes);
 
         Given(scheduled);
         Then(
@@ -38,7 +38,7 @@ public class AvailableSlotsProjectionTest : ProjectionTest
     [Fact]
     public void should_remove_slot_from_the_list_if_was_booked()
     {
-        var scheduled = new Scheduled(Guid.NewGuid().ToString(), _now, _tenMinutes);
+        var scheduled = new ScheduledWithDuration(Guid.NewGuid().ToString(), _now, _tenMinutes);
         var booked = new Booked(scheduled.SlotId, "patient-123");
 
         Given(scheduled, booked);
@@ -48,7 +48,7 @@ public class AvailableSlotsProjectionTest : ProjectionTest
     [Fact]
     public void should_add_slot_again_if_booking_was_cancelled()
     {
-        var scheduled = new Scheduled(Guid.NewGuid().ToString(), _now, _tenMinutes);
+        var scheduled = new ScheduledWithDuration(Guid.NewGuid().ToString(), _now, _tenMinutes);
         var booked = new Booked(scheduled.SlotId, "patient-123");
         var cancelled = new Cancelled(scheduled.SlotId, "No longer needed");
 

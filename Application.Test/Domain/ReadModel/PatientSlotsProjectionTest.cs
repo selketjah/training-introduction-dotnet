@@ -37,7 +37,7 @@ public class PatientSlotsProjectionTest : ProjectionTest
     [Fact] //
     public void should_return_an_empty_list_if_the_slot_was_scheduled()
     {
-        var scheduled = new Scheduled(Guid.NewGuid().ToString(), _now, _tenMinutes);
+        var scheduled = new ScheduledWithDuration(Guid.NewGuid().ToString(), _now, _tenMinutes);
         Given(scheduled);
         Then(
             new List<PatientSlot>(),
@@ -48,7 +48,7 @@ public class PatientSlotsProjectionTest : ProjectionTest
     [Fact] //empty
     public void should_return_a_slot_if_was_booked()
     {
-        var scheduled = new Scheduled(Guid.NewGuid().ToString(), _now, _tenMinutes);
+        var scheduled = new ScheduledWithDuration(Guid.NewGuid().ToString(), _now, _tenMinutes);
         var booked = new Booked(scheduled.SlotId, _patientId);
         Given(scheduled, booked);
         Then(
@@ -60,7 +60,7 @@ public class PatientSlotsProjectionTest : ProjectionTest
     [Fact] // empty
     public void should_return_a_slot_if_was_cancelled()
     {
-        var scheduled = new Scheduled(Guid.NewGuid().ToString(), _now, _tenMinutes);
+        var scheduled = new ScheduledWithDuration(Guid.NewGuid().ToString(), _now, _tenMinutes);
         var booked = new Booked(scheduled.SlotId, _patientId);
         var cancelled = new Cancelled(scheduled.SlotId, "No longer needed");
 
@@ -76,7 +76,7 @@ public class PatientSlotsProjectionTest : ProjectionTest
     {
         var patientId2 = "patient-456";
 
-        var scheduled = new Scheduled(Guid.NewGuid().ToString(), _now, _tenMinutes);
+        var scheduled = new ScheduledWithDuration(Guid.NewGuid().ToString(), _now, _tenMinutes);
         var booked = new Booked(scheduled.SlotId, _patientId);
         var cancelled = new Cancelled(scheduled.SlotId, "No longer needed");
         var booked2 = new Booked(scheduled.SlotId, patientId2);

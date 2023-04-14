@@ -30,14 +30,14 @@ public class SlotAggregateTest : AggregateTest<SlotAggregate>
         await When(new Schedule(_slotId, _now, _tenMinutes));
         Then(events =>
         {
-            Assert.Equal(new Scheduled(_slotId, _now, _tenMinutes), events.First());
+            Assert.Equal(new ScheduledWithDuration(_slotId, _now, _tenMinutes), events.First());
         });
     }
 
     [Fact]
     public async Task  should_not_be_double_scheduled()
     {
-        Given(new Scheduled(_slotId, _now, _tenMinutes));
+        Given(new ScheduledWithDuration(_slotId, _now, _tenMinutes));
         await When(new Schedule(_slotId, _now, _tenMinutes));
         Then<SlotAlreadyScheduledException>();
     }
@@ -45,7 +45,7 @@ public class SlotAggregateTest : AggregateTest<SlotAggregate>
     [Fact]
     public async Task  should_be_booked()
     {
-        Given(new Scheduled(_slotId, _now, _tenMinutes));
+        Given(new ScheduledWithDuration(_slotId, _now, _tenMinutes));
         await When(new Book(_slotId, _patientId));
         Then(events =>
         {
@@ -65,7 +65,7 @@ public class SlotAggregateTest : AggregateTest<SlotAggregate>
     [Fact]
     public async Task  cant_be_double_booked()
     {
-        Given(new Scheduled(_slotId, _now, _tenMinutes), new Booked(_slotId, _patientId));
+        Given(new ScheduledWithDuration(_slotId, _now, _tenMinutes), new Booked(_slotId, _patientId));
         await When(new Book(_slotId, _patientId));
         Then<SlotAlreadyBookedException>();
     }
@@ -73,7 +73,7 @@ public class SlotAggregateTest : AggregateTest<SlotAggregate>
     [Fact]
     public async Task can_be_cancelled()
     {
-        Given(new Scheduled(_slotId, _now, _tenMinutes), new Booked(_slotId, _patientId));
+        Given(new ScheduledWithDuration(_slotId, _now, _tenMinutes), new Booked(_slotId, _patientId));
         await When(new Cancel(_slotId, "No longer needed", _now));
         Then(events =>
         {
@@ -85,7 +85,7 @@ public class SlotAggregateTest : AggregateTest<SlotAggregate>
     public async Task  cancelled_slot_can_be_booked_again()
     {
 
-        Given(new Scheduled(_slotId, _now, _tenMinutes), new Booked(_slotId, _patientId), new Cancelled(_slotId, "No longer needed"));
+        Given(new ScheduledWithDuration(_slotId, _now, _tenMinutes), new Booked(_slotId, _patientId), new Cancelled(_slotId, "No longer needed"));
         await When(new Book(_slotId, _patientId));
         Then(events =>
         {
@@ -96,7 +96,7 @@ public class SlotAggregateTest : AggregateTest<SlotAggregate>
     [Fact]
     public async Task  cant_be_cancelled_after_start_time()
     {
-        var scheduled = new Scheduled(_slotId, _now.Subtract(TimeSpan.FromHours(1)), _tenMinutes);
+        var scheduled = new ScheduledWithDuration(_slotId, _now.Subtract(TimeSpan.FromHours(1)), _tenMinutes);
         var booked = new Booked(_slotId, "patient name");
 
         Given(scheduled, booked);
@@ -107,7 +107,7 @@ public class SlotAggregateTest : AggregateTest<SlotAggregate>
     [Fact]
     public async Task  cant_be_cancelled_if_wasnt_booked()
     {
-        var scheduled = new Scheduled(_slotId, _now.Subtract(TimeSpan.FromHours(1)), _tenMinutes);
+        var scheduled = new ScheduledWithDuration(_slotId, _now.Subtract(TimeSpan.FromHours(1)), _tenMinutes);
 
         Given(scheduled);
         await When(new Cancel(_slotId, "reason",DateTime.UtcNow));

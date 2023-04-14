@@ -10,12 +10,14 @@ public class SlotAggregate : AggregateRoot
     private bool _isBooked;
     private bool _isScheduled;
     private DateTime _startTime;
+    private TimeSpan _duration;
 
     public SlotAggregate()
     {
         Register<Booked>(When);
         Register<Cancelled>(When);
         Register<Scheduled>(When);
+        Register<ScheduledWithDuration>(When);
     }
 
     public void Schedule(string id, DateTime startTime, TimeSpan duration)
@@ -25,7 +27,7 @@ public class SlotAggregate : AggregateRoot
             throw new SlotAlreadyScheduledException();
         }
 
-        Raise(new Scheduled(id, startTime, duration));
+        Raise(new ScheduledWithDuration(id, startTime, duration));
     }
 
     public void Cancel(string reason, DateTime cancellationTime)
@@ -78,10 +80,21 @@ public class SlotAggregate : AggregateRoot
 
     private void When(Scheduled scheduled)
     {
-        var (slotId, startTime, _) = scheduled;
+        var (slotId, startTime) = scheduled;
         
         _isScheduled = true;
         _startTime = startTime;
         Id = slotId;
+        _duration = new TimeSpan(0, 15, 0);
+    }
+
+    private void When(ScheduledWithDuration scheduled)
+    {
+        var (slotId, startTime, duration) = scheduled;
+        
+        _isScheduled = true;
+        _startTime = startTime;
+        Id = slotId;
+        _duration = duration;
     }
 }
